@@ -1,0 +1,33 @@
+---
+---
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ site.title }}</title>
+  </head>
+  <body>
+    <h1>All sorts of SVG!</h1>
+    
+    <h2>As an image</h2>
+    <img src="{{ site.baseurl }}/assets/icons/diamond.svg">
+    
+    <h2>Inline, with different fills</h2>
+    
+    <h3>No fill</h3>
+    {% include svg/diamond.svg %}
+
+    <h3>Magenta</h3>
+    {% include svg/diamond.svg fill='#f0f' %}
+
+    <h4>SVG symbol</h4>
+    <svg viewBox="0 0 300 100">
+      <defs>
+        <symbol id="diamond">{% include svg/diamond.svg %}</symbol>
+      </defs>
+      <use href="#diamond" fill="red"></use>
+      <use href="#diamond" fill="green" x="100"></use>
+      <use href="#diamond" fill="blue" x="200"></use>
+    </svg>
+  </body>
+</html>
