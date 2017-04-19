@@ -1,0 +1,3 @@
+<svg viewBox="0 0 100 100" fill="{{ include.fill | default: 'currentColor' }}">
+  <path d="M50,0L100,50L50,100L0,50Z"></path>
+</svg>
