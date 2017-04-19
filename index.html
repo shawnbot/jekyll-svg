@@ -1,33 +1,81 @@
 ---
----
-<!doctype html>
-<html lang="en-US">
-  <head>
-    <meta charset="utf-8">
-    <title>{{ site.title }}</title>
-  </head>
-  <body>
-    <h1>All sorts of SVG!</h1>
-    
-    <h2>As an image</h2>
-    <img src="{{ site.baseurl }}/assets/icons/diamond.svg">
-    
-    <h2>Inline, with different fills</h2>
-    
-    <h3>No fill</h3>
-    {% include svg/diamond.svg %}
+icon:
+  file: icons/diamond.svg
+  size: 100 100
+examples:
+- title: Image reference
+  include: image
+  desc: With a practically empty file, we can output the include as standalone SVG, then reference that file via `<img src="...">`.
+  source: '<img src="{{ site.baseurl }}/assets/{{ file }}">'
+- title: Inline, no fill
+  include: current-color
+  desc: Or we can `{% include %}` the file in HTML or Markdown, which inlines the SVG. Without a `fill` parameter, our include uses `defaultColor`, so it inherits the fill from the CSS `color` of its parent element.
+  source: '{% include {{ file }} %}'
+- title: Inline with explicit inherited fill
+  include: inherit-style
+  desc: This example just shows how the inline SVG will inherit the inline `color` styles.
+  source: |
+    <span style="color: #777">
+      {% include {{ file }} %}
+    </span>
+- title: Inline with explicit fill
+  include: direct-fill
+  desc: If you provide a `fill` parameter to the include, that value becomes the `fill` of the inline SVG.
+  source: |
+    {% include {{ file }} fill='#f0f' %}
+    {% include {{ file }} fill='#0ff' %}
+    {% include {{ file }} fill='#ff0' %}
+- title: Inline SVG `<symbol>` and `<use>`
+  include: symbol
+  desc: Or, if you want to get really fancy, you can `{% include %}` the SVG to create a `<symbol>` with `fill="inherit"`, then instantiate a colorized symbol with `<use fill="...">`.
+  source: |
+    <svg viewBox="0 0 100 100"><use href="#symbol" fill="red"></use></svg>
+    <svg viewBox="0 0 100 100"><use href="#symbol" fill="green"></use></svg>
+    <svg viewBox="0 0 100 100"><use href="#symbol" fill="blue"></use></svg>
 
-    <h3>Magenta</h3>
-    {% include svg/diamond.svg fill='#f0f' %}
-
-    <h4>SVG symbol</h4>
-    <svg viewBox="0 0 300 100">
+    <svg class="defs">
       <defs>
-        <symbol id="diamond">{% include svg/diamond.svg %}</symbol>
+        <symbol id="symbol">
+          {% include {{ file }} fill='inherit' %}
+        </symbol>
       </defs>
-      <use href="#diamond" fill="red"></use>
-      <use href="#diamond" fill="green" x="100"></use>
-      <use href="#diamond" fill="blue" x="200"></use>
     </svg>
-  </body>
-</html>
+---
+<div class="container is-fluid">
+  <h1 class="title is-1">All sorts of SVG!</h1>
+
+  {% assign icon = page.icon %}
+  {% assign file = icon.file %}
+  {% capture find %}{% raw %}{{ file }}{% endraw %}{% endcapture %}
+
+  {% for example in page.examples %}
+  <section class="tile is-ancestor">
+    {% capture ex %}{% include examples/{{ example.include }}.html %}{% endcapture %}
+    <div class="tile is-parent is-vertical is-6">
+      <div class="tile is-child box">
+        <h2 class="title is-4">{{ example.title | markdownify }}</h2>
+        {{ example.desc | markdownify }}
+
+{% capture md %}
+```html
+{{ example.source | strip | replace: find, file }}
+```
+{% endcapture %}
+        {{ md | markdownify }}
+      </div>
+    </div>
+    <div class="tile is-parent is-6">
+      <div class="tile is-child box">
+        <h2 class="title is-4">Output</h2>
+        {{ ex }}
+{% capture md %}
+```html
+{{ ex | strip }}
+```
+{% endcapture %}
+        {{ md | markdownify }}
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+</div>

@@ -1,0 +1,14 @@
+img,
+svg {
+  display: inline-block;
+  height: 100px;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+svg.defs {
+  height: 0;
+}
